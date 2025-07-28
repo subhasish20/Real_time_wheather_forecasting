@@ -4,17 +4,19 @@ import numpy as np
 import requests
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import accuracy_score
 from datetime import timedelta, datetime
 import pytz
 
 # ========== Utility Functions ==========
 
 def get_current_weather(city):
-    API_KEY = 'a5e8713c6700bfce420cd38b90e2122b'
-    BASE_URL = 'https://api.openweathermap.org/data/2.5/weather'
+    API_KEY = 'a5e8713c6700bfce420cd38b90e2122b' # API key of open weather 
+    BASE_URL = 'https://api.openweathermap.org/data/2.5/weather' # api base url link
     url = f"{BASE_URL}?q={city}&appid={API_KEY}&units=metric"
-    response = requests.get(url)
+    response = requests.get(url) # calling through url
 
     if response.status_code != 200:
         st.error(f"API error {response.status_code}: {response.text}")
@@ -37,15 +39,16 @@ def get_current_weather(city):
         'Wind_Gust_Speed': data['wind'].get('gust', 0),
         'description': data['weather'][0]['description'],
         'country': data['sys'].get('country', 'N/A')
-    }
+    } # taking all the values for model building
 
-def read_historical_data(filename):
+def read_historical_data(filename): # it will use to read historical data
     df = pd.read_csv(filename)
-    df = df.dropna().drop_duplicates()
+    df = df.dropna() # dropping the null vlaues
+    df = df.drop_duplicates() # dropping the duplicate value
     return df
 
 def prepare_data(data):
-    le = LabelEncoder()
+    le = LabelEncoder() # encoding categorical values
     data['WindGustDir'] = le.fit_transform(data['WindGustDir'])
     data['RainTomorrow'] = le.fit_transform(data['RainTomorrow'])
     X = data.drop(columns=['RainTomorrow'])
@@ -54,9 +57,17 @@ def prepare_data(data):
 
 def train_rain_model(X, y):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
-    model = RandomForestClassifier()
+    model = RandomForestClassifier(n_estimators=200)
     model.fit(X_train, y_train)
-    return model
+
+    # Predict on test set
+    y_pred = model.predict(X_test)
+
+    # Calculate accuracy
+    acc = accuracy_score(y_test, y_pred)
+
+    return model, acc
+
 
 def prepare_regression_data(data, feature):
     X, y = [], []
@@ -66,7 +77,7 @@ def prepare_regression_data(data, feature):
     return np.array(X).reshape(-1, 1), np.array(y)
 
 def train_regression_model(X, y):
-    model = RandomForestRegressor()
+    model = RandomForestRegressor(n_estimators=200)
     model.fit(X, y)
     return model
 
@@ -107,7 +118,9 @@ if city:
         # Load historical data
         data = read_historical_data("weather.csv")
         X, y, le = prepare_data(data)
-        rain_model = train_rain_model(X, y)
+        rain_model, accuracy = train_rain_model(X, y)
+        print(f"✅ Model Accuracy on Test Data: **{round(accuracy * 100, 2)}%**")
+
 
         wind_dir = get_wind_direction(current_weather['wind_deg'])
         wind_dir_encoded = le.transform([wind_dir])[0] if wind_dir in le.classes_ else -1
