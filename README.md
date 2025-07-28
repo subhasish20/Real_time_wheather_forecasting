@@ -1,6 +1,6 @@
 # 🌦️ Real-Time Weather Forecasting 🌍
 
-A real-time weather forecasting application that provides live weather information such as temperature, humidity, wind speed, and weather conditions based on user input (city or location). The app fetches accurate weather data using public APIs and presents it in a clean, user-friendly format.
+A real-time weather forecasting application that will predict the next day whather condition as well as live weather information such as temperature, humidity and weather conditions based on user input (city or location). The app fetches accurate weather data using public APIs and presents it in a clean, user-friendly format.
 
 ---
 
@@ -31,8 +31,9 @@ The main goal of this project is to:
 
 | Category            | Tools/Frameworks                          |
 |---------------------|-------------------------------------------|
-| Language            | `Python / JavaScript / HTML / CSS`        |
+| Language            | `Python / HTML / CSS`        |
 | Weather API         | `OpenWeatherMap API`                      |
-| Frontend (Optional) | `Flask`, `HTML&CSS`                       |
+| Frontend (Optional) | `Flask`, `steamlit` `HTML&CSS`                       |
 | Data Handling       |  `pandas`                                 |
 | Visualization       | `matplotlib` `seaborn `                   |
+| Machine Learning    | `scikit-learn`                                    |
