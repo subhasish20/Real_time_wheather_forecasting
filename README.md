@@ -15,7 +15,7 @@ The main goal of this project is to:
 
 ---
 
-## 🔍 Features
+## 🔍 Features in this project
 
 - 🏙️ City-based weather search
 - 🌡️ Current temperature (Celsius/Fahrenheit)
